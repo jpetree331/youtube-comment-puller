@@ -548,19 +548,36 @@ select:focus-visible {
 }
 .vidmeta {
   min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 0.85rem;
   color: var(--muted);
+}
+.vidmeta-mode {
+  flex: none;
+  font-family: "Space Mono", monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.02em;
+  color: #2a1730;
+  background: var(--amber);
+  padding: 2px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.vidmeta-title {
+  min-width: 0;
+  color: var(--ink);
+  font-weight: 600;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.vidmeta-title {
-  color: var(--ink);
-  font-weight: 600;
-}
 .vidmeta-count {
+  flex: none;
   font-family: "Space Mono", monospace;
   color: var(--faint);
+  white-space: nowrap;
 }
 .tools {
   margin-left: auto;

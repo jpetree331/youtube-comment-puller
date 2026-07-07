@@ -32,6 +32,12 @@ const ZOOM_MAX = 2.4;
 const ZOOM_STEP = 0.15;
 const clampZoom = (z: number) => Math.round(Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, z)) * 100) / 100;
 
+/** Recent-dropdown option label: truncated title + card count (when known). */
+function recentLabel(x: DeckIndexEntry): string {
+  const t = x.title.length > 44 ? x.title.slice(0, 44) + "…" : x.title;
+  return x.count ? `${t} · ${x.count}` : t;
+}
+
 export default function Page() {
   const [videoInput, setVideoInput] = useState("");
   const [deck, setDeck] = useState<CommentItem[]>([]);
@@ -149,21 +155,26 @@ export default function Page() {
   }, [videoInput, passcode, count, mode]);
 
   // --- reopen a cached deck from the Recent dropdown ---
-  const openRecent = useCallback((id: string) => {
-    if (!id) return;
-    const d = getDeck(id);
-    if (!d) {
-      setErr("That deck isn't saved anymore.");
-      return;
-    }
-    setDeck(d.comments);
-    setIdx(0);
-    setTitle(d.title || id);
-    setCurrentId(id);
-    setCommentCount(d.commentCount ?? null);
-    setLoadedMode(d.mode ?? "likes");
-    setOk(`Reopened — ${d.title || id}`);
-  }, []);
+  const openRecent = useCallback(
+    (key: string) => {
+      if (!key) return;
+      const entry = recent.find((x) => x.key === key);
+      const d = getDeck(key);
+      if (!d || !entry) {
+        setErr("That deck isn't saved anymore.");
+        return;
+      }
+      const m = d.mode ?? entry.mode;
+      setDeck(d.comments);
+      setIdx(0);
+      setTitle(d.title || entry.id);
+      setCurrentId(entry.id);
+      setCommentCount(d.commentCount ?? entry.commentCount ?? null);
+      setLoadedMode(m);
+      setOk(`Reopened — ${MODE_LABEL[m]} · ${d.comments.length} — ${d.title || entry.id}`);
+    },
+    [recent],
+  );
 
   // --- copy the whole deck as a plain-text numbered list (teleprompter-friendly) ---
   const copyAll = useCallback(() => {
@@ -322,20 +333,33 @@ export default function Page() {
         {/* value pinned to "" so re-selecting the same deck fires onChange again */}
         <select value="" onChange={(e) => openRecent(e.target.value)} aria-label="Recent decks">
           <option value="">— pulled videos —</option>
-          {recent.map((x) => (
-            <option key={x.id} value={x.id}>
-              {x.title.length > 52 ? x.title.slice(0, 52) + "…" : x.title}
-            </option>
-          ))}
+          {MODES.map((m) => {
+            const items = recent.filter((x) => x.mode === m);
+            if (!items.length) return null;
+            return (
+              <optgroup key={m} label={MODE_LABEL[m]}>
+                {items.map((x) => (
+                  <option key={x.key} value={x.key}>
+                    {recentLabel(x)}
+                  </option>
+                ))}
+              </optgroup>
+            );
+          })}
         </select>
       </div>
 
       {hasDeck && (
         <div className="deckbar">
-          <div className="vidmeta" title={title}>
-            <span className="vidmeta-title">{title}</span>
+          <div className="vidmeta">
+            <span className="vidmeta-mode">
+              {MODE_LABEL[loadedMode]} · {deck.length}
+            </span>
+            <span className="vidmeta-title" title={title}>
+              {title}
+            </span>
             {commentCount != null && (
-              <span className="vidmeta-count"> · {commentCount.toLocaleString()} comments</span>
+              <span className="vidmeta-count">· {commentCount.toLocaleString()} comments</span>
             )}
           </div>
           <div className="tools">
@@ -350,7 +374,7 @@ export default function Page() {
 
       <DeckStage
         variant="main"
-        deckId={currentId}
+        deckId={`${currentId}:${loadedMode}`}
         comment={hasDeck ? deck[idx] : null}
         index={idx}
         total={deck.length}
@@ -406,7 +430,7 @@ export default function Page() {
           </div>
           <DeckStage
             variant="focus"
-            deckId={currentId}
+            deckId={`${currentId}:${loadedMode}`}
             comment={deck[idx]}
             index={idx}
             total={deck.length}

@@ -29,7 +29,7 @@ Your YouTube API key lives on the server and **never reaches the browser**.
 - **Zoom & focus mode** — scale the comment text with `+` / `−`, or pop into a full-window focus view to read big on camera.
 - **Flip fast** — on-screen arrows, **← / → keyboard paging**, clickable dots (or a jump box for large pulls).
 - **Copy all** — dumps a clean numbered, plain-text list for a teleprompter or show notes.
-- **Recent** — every pull is cached in your browser, so past videos reopen instantly (even offline).
+- **Recent** — every pull is cached in your browser and **grouped by mode**, so past videos reopen instantly (even offline) — and the same video pulled two different ways stays as two distinct, labelled entries.
 - **Your key stays secret** — the browser only ever calls *your* API route; the key never ships to the client.
 - **Optional passcode** — gate a public deployment so strangers can't burn your YouTube quota.
 
