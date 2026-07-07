@@ -360,7 +360,7 @@ select:focus {
   border-radius: 20px;
 }
 .comment {
-  font-size: 1.15rem;
+  font-size: calc(1.15rem * var(--zoom, 1));
   line-height: 1.55;
   color: var(--ink);
   overflow-wrap: anywhere;
@@ -473,7 +473,7 @@ select:focus {
 }
 @media (max-width: 520px) {
   .comment {
-    font-size: 1.05rem;
+    font-size: calc(1.05rem * var(--zoom, 1));
   }
   .nav {
     width: 38px;
@@ -492,4 +492,236 @@ input:focus-visible,
 select:focus-visible {
   outline: 2px solid var(--amber);
   outline-offset: 2px;
+}
+
+/* ============================================================
+   Reader features: count picker, pull modes, zoom, focus mode
+   ============================================================ */
+
+/* Options row: count picker + mode toggle */
+.options {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.count-sel {
+  color: var(--ink);
+}
+.seg {
+  display: inline-flex;
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 3px;
+}
+.seg-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 7px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.15s;
+  white-space: nowrap;
+}
+.seg-btn:hover {
+  color: var(--ink);
+}
+.seg-btn.on {
+  background: var(--amber);
+  color: #2a1730;
+}
+
+/* Deck bar: video meta (title + comment count) and reader tools */
+.deckbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  min-height: 34px;
+}
+.vidmeta {
+  min-width: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.vidmeta-title {
+  color: var(--ink);
+  font-weight: 600;
+}
+.vidmeta-count {
+  font-family: "Space Mono", monospace;
+  color: var(--faint);
+}
+.tools {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
+
+/* Zoom controls */
+.zoom {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  border: 1px solid var(--line2);
+  border-radius: 10px;
+  padding: 2px;
+}
+.zoombtn {
+  width: 30px;
+  height: 30px;
+  background: none;
+  border: none;
+  color: var(--ink);
+  font-size: 1.1rem;
+  line-height: 1;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.15s;
+}
+.zoombtn:hover:not(:disabled) {
+  background: var(--card2);
+}
+.zoombtn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+.zoomval {
+  min-width: 46px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: "Space Mono", monospace;
+  font-size: 0.75rem;
+  cursor: pointer;
+  padding: 0 2px;
+}
+.zoomval:hover {
+  color: var(--ink);
+}
+
+/* Tool button (focus / exit) */
+.toolbtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1px solid var(--line2);
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 7px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.15s;
+}
+.toolbtn:hover {
+  color: var(--ink);
+  border-color: var(--amber);
+}
+.toolbtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Jump box (used instead of dots for big decks) */
+.jump {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.jump-lbl {
+  font-family: "Space Mono", monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.jump input {
+  width: 64px;
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  padding: 6px 8px;
+  border-radius: 8px;
+  font-family: "Space Mono", monospace;
+  font-size: 0.8rem;
+}
+.jump input:focus {
+  outline: none;
+  border-color: var(--amber);
+}
+
+/* Focus (big read) overlay — fills the browser window, not the whole monitor */
+.focus-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: radial-gradient(1200px 600px at 80% -10%, #2a1c3a 0%, var(--bg) 55%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 20px;
+}
+.focus-bar {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  right: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.focus-stage {
+  width: 100%;
+  max-width: 1000px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.focus-card {
+  flex: 1;
+  min-width: 0;
+}
+.focus-overlay .card {
+  padding: 34px 40px;
+}
+.focus-overlay .comment {
+  font-size: calc(1.7rem * var(--zoom, 1));
+  line-height: 1.5;
+  max-height: 62vh;
+}
+.focus-overlay .name {
+  font-size: 1.4rem;
+}
+.focus-counter {
+  font-family: "Space Mono", monospace;
+  font-size: 0.95rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+@media (max-width: 640px) {
+  .focus-overlay .card {
+    padding: 22px;
+  }
+  .focus-overlay .comment {
+    font-size: calc(1.3rem * var(--zoom, 1));
+  }
 }

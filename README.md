@@ -1,13 +1,14 @@
 <div align="center">
 
-<img src="docs/preview.svg" alt="Comment Deck — the top 10 comments of a YouTube video shown as a card deck" width="820">
+<img src="docs/preview.svg" alt="Comment Deck — top YouTube comments shown as a card deck" width="820">
 
 # Comment Deck
 
-**Pull the top 10 comments from any YouTube video and flip through them like a deck of cards.**
+**Pull the top comments from any YouTube video and flip through them like a deck of cards.**
 
-Made for reading fan comments aloud on camera — big, readable type, one comment at a time,
-keyboard paging, and a one-click "copy all" for your teleprompter.
+Made for reading fan comments aloud on camera — big, zoomable type, one comment at a time,
+a distraction-free focus mode, keyboard paging, and a one-click "copy all" for your teleprompter.
+Pull the **most-liked**, **YouTube's own order**, or a **random** handful — 10, 25, 50, or 100 at a time.
 Your YouTube API key lives on the server and **never reaches the browser**.
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fjpetree331%2Fyoutube-comment-puller&env=YOUTUBE_API_KEY&envDescription=YouTube%20Data%20API%20v3%20key%20(kept%20server-side)&envLink=https%3A%2F%2Fconsole.cloud.google.com%2Fapis%2Flibrary%2Fyoutube.googleapis.com&project-name=comment-deck&repository-name=comment-deck)
@@ -22,10 +23,12 @@ Your YouTube API key lives on the server and **never reaches the browser**.
 
 ## ✨ Features
 
-- **Top 10 by likes** — pulls up to ~300 comments in YouTube's "relevance" order, re-ranks them by like count, and keeps the ten best.
-- **Card-deck reader** — one comment per card with a `#N of 10` badge, avatar, like count, and timestamp. Big, on-camera-friendly type.
-- **Flip fast** — on-screen arrows, **← / → keyboard paging**, and clickable dots.
-- **Copy all 10** — dumps a clean numbered, plain-text list for a teleprompter or show notes.
+- **Three ways to pull** — **Most liked** (re-ranked by like count), **YouTube top** (the site's own relevance order), or **Random** (a shuffled sample).
+- **Choose how many** — 10, 25, 50, or 100 comments per pull, plus the video's total comment count.
+- **Card-deck reader** — one comment per card with a `#N of M` badge, avatar, like count, and timestamp. Big, on-camera-friendly type.
+- **Zoom & focus mode** — scale the comment text with `+` / `−`, or pop into a full-window focus view to read big on camera.
+- **Flip fast** — on-screen arrows, **← / → keyboard paging**, clickable dots (or a jump box for large pulls).
+- **Copy all** — dumps a clean numbered, plain-text list for a teleprompter or show notes.
 - **Recent** — every pull is cached in your browser, so past videos reopen instantly (even offline).
 - **Your key stays secret** — the browser only ever calls *your* API route; the key never ships to the client.
 - **Optional passcode** — gate a public deployment so strangers can't burn your YouTube quota.
@@ -95,20 +98,30 @@ comment call is `POST /api/comments`.)
 
 ## ⌨️ Interactions
 
-| Action              | How                                             |
-| ------------------- | ----------------------------------------------- |
-| Next / previous     | Arrow buttons, or **← / →** keys                |
-| Jump to a comment   | Click a dot                                     |
-| Copy all 10 as text | **Copy all 10** button (numbered plain-text)    |
-| Reopen a past pull  | **Recent** dropdown                             |
-| Settings / passcode | Gear icon (top-right)                           |
+| Action              | How                                                      |
+| ------------------- | -------------------------------------------------------- |
+| Pick a mode & count | **Most liked / YouTube top / Random** toggle + count picker |
+| Next / previous     | Arrow buttons, or **← / →** keys                         |
+| Jump to a comment   | Click a dot, or type a number in the jump box            |
+| Bigger / smaller    | **+ / −** buttons or keys (zoom the comment text)        |
+| Focus (big read)    | **Focus** button — fills the window; **Esc** to exit     |
+| Copy all as text    | **Copy all** button (numbered plain-text)                |
+| Reopen a past pull  | **Recent** dropdown                                      |
+| Settings / passcode | Gear icon (top-right)                                    |
 
-## 🧠 How ranking works
+## 🧠 The three pull modes
 
-YouTube's API can't sort comments by likes directly, so the tool fetches up to **3 pages of 100**
-comments in *relevance* order, then re-sorts everything it collected by like count and keeps the
-**top 10**. Popular videos have their most-liked comments surface in relevance order anyway, so this
-window reliably catches the crowd favorites.
+YouTube's default **"Top comments"** order is a *relevance/engagement* ranking (likes, replies,
+recency, and other signals) — **not** a strict most-liked sort. Comment Deck fetches up to **3 pages
+of 100** comments in that relevance order, then gives you three ways to read them:
+
+- **Most liked** — re-sorts the pool by like count, so you get the genuinely most-hearted comments
+  (a truer "top" than YouTube's own list).
+- **YouTube top** — keeps YouTube's relevance order untouched — exactly what visitors see on the site.
+- **Random** — shuffles the pool for a fresh, unbiased handful each pull.
+
+Each mode returns as many as you pick (10–100). For popular videos, the crowd favorites surface
+within that relevance window regardless of mode.
 
 ## 🛠️ Tech & structure
 
@@ -118,12 +131,12 @@ Next.js 15 (App Router) · TypeScript · React 19 · deployed on Vercel. No data
 app/
   api/comments/route.ts   # the security boundary: the only caller of googleapis.com
   api/config/route.ts     # reports only whether a passcode is required
-  components/             # CommentCard + inline SVG icons
+  components/             # CommentCard, DeckStage, inline SVG icons
   globals.css             # the visual design
-  page.tsx                # the deck UI and all interactions
+  page.tsx                # the deck UI, pull modes, zoom, and focus mode
 lib/
-  youtube.ts              # video-ID parsing, fetch/sort/slice, error mapping (server)
-  storage.ts              # localStorage deck cache + passcode (client)
+  youtube.ts              # video-ID parsing, fetch + rank/shuffle by mode, error mapping (server)
+  storage.ts              # localStorage deck cache, passcode, zoom (client)
   format.ts               # relative timestamps
 comment-deck.html         # the original single-file version this was ported from
 ```

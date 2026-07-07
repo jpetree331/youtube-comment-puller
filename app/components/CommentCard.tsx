@@ -9,6 +9,7 @@ interface Props {
   comment: CommentItem;
   index: number;
   total: number;
+  zoom?: number;
 }
 
 /**
@@ -19,7 +20,7 @@ interface Props {
  * All text (name, comment) is rendered as React children, so it is escaped
  * automatically — no dangerouslySetInnerHTML.
  */
-export function CommentCard({ comment, index, total }: Props) {
+export function CommentCard({ comment, index, total, zoom = 1 }: Props) {
   const [imgFailed, setImgFailed] = useState(false);
   // Retry the image whenever the avatar URL changes. The parent normally
   // remounts this card (key includes the index), which resets imgFailed for
@@ -33,7 +34,7 @@ export function CommentCard({ comment, index, total }: Props) {
   const showAvatar = Boolean(comment.avatar) && !imgFailed;
 
   return (
-    <div className="card">
+    <div className="card" style={{ "--zoom": zoom } as React.CSSProperties}>
       <div className="rank">
         #{index + 1} of {total}
       </div>

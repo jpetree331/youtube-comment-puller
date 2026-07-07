@@ -5,16 +5,19 @@
 // change would surface the key client-side, it does not belong in this file.
 
 import { NextResponse } from "next/server";
-import { parseVideoId, fetchTopComments, fetchTitle, YouTubeApiError } from "@/lib/youtube";
-import type { DeckResponse } from "@/lib/types";
+import { parseVideoId, fetchComments, fetchVideoMeta, YouTubeApiError } from "@/lib/youtube";
+import type { DeckResponse, PullMode } from "@/lib/types";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic"; // never cache — depends on live env + body
 
+const PULL_MODES: PullMode[] = ["likes", "youtube", "random"];
+
 interface RequestBody {
   input?: string;
   passcode?: string;
-  pages?: number;
+  count?: number;
+  mode?: PullMode;
 }
 
 /** Belt-and-suspenders: strip the key from any text before it reaches the client. */
@@ -49,10 +52,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Couldn't read a video ID from that." }, { status: 400 });
   }
 
+  const count = typeof body.count === "number" ? body.count : undefined;
+  const mode: PullMode = PULL_MODES.includes(body.mode as PullMode)
+    ? (body.mode as PullMode)
+    : "likes";
+
   try {
-    const [comments, title] = await Promise.all([
-      fetchTopComments(id, key, typeof body.pages === "number" ? body.pages : undefined),
-      fetchTitle(id, key),
+    const [comments, meta] = await Promise.all([
+      fetchComments(id, key, { count, mode }),
+      fetchVideoMeta(id, key),
     ]);
 
     if (!comments.length) {
@@ -62,7 +70,12 @@ export async function POST(req: Request) {
       );
     }
 
-    const payload: DeckResponse = { title: title || id, videoId: id, comments };
+    const payload: DeckResponse = {
+      title: meta.title || id,
+      videoId: id,
+      comments,
+      commentCount: meta.commentCount,
+    };
     return NextResponse.json(payload);
   } catch (e) {
     if (e instanceof YouTubeApiError) {

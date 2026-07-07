@@ -3,7 +3,7 @@
 // artifact sandbox the original HTML had to tiptoe around). Every access is
 // guarded so SSR / private-mode / disabled-storage never throws.
 
-import type { CommentItem } from "./types";
+import type { CommentItem, PullMode } from "./types";
 
 export interface DeckIndexEntry {
   id: string;
@@ -11,7 +11,15 @@ export interface DeckIndexEntry {
   at: number;
 }
 
-export interface StoredDeck {
+// Extra context about how a deck was pulled, cached so a reopened deck shows the
+// right total/mode without another API call.
+export interface DeckMeta {
+  commentCount?: number | null;
+  mode?: PullMode;
+  count?: number;
+}
+
+export interface StoredDeck extends DeckMeta {
   title: string;
   comments: CommentItem[];
   at: number;
@@ -19,6 +27,7 @@ export interface StoredDeck {
 
 const INDEX_KEY = "deck_index";
 const PASSCODE_KEY = "cd_passcode";
+const ZOOM_KEY = "cd_zoom";
 const INDEX_CAP = 40;
 const deckKey = (id: string) => `deck:${id}`;
 
@@ -58,10 +67,15 @@ export function loadIndex(): DeckIndexEntry[] {
   }
 }
 
-/** Cache a pulled deck and move it to the top of the recent index. */
-export function saveDeck(id: string, title: string, comments: CommentItem[]): DeckIndexEntry[] {
+/** Cache a pulled deck (with how it was pulled) and move it to the top of the recent index. */
+export function saveDeck(
+  id: string,
+  title: string,
+  comments: CommentItem[],
+  meta: DeckMeta = {},
+): DeckIndexEntry[] {
   const at = Date.now();
-  safeSet(deckKey(id), JSON.stringify({ title, comments, at } satisfies StoredDeck));
+  safeSet(deckKey(id), JSON.stringify({ title, comments, at, ...meta } satisfies StoredDeck));
 
   const index = [
     { id, title: title || id, at },
@@ -93,4 +107,14 @@ export function setPasscode(value: string): void {
 
 export function clearPasscode(): void {
   safeRemove(PASSCODE_KEY);
+}
+
+/** Comment-text zoom factor (1 = 100%). Persisted across sessions. */
+export function getZoom(): number {
+  const v = Number(safeGet(ZOOM_KEY));
+  return Number.isFinite(v) && v > 0 ? v : 1;
+}
+
+export function setZoom(value: number): void {
+  safeSet(ZOOM_KEY, String(value));
 }
