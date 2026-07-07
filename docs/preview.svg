@@ -1,0 +1,92 @@
+<svg viewBox="0 0 1000 560" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+  <defs>
+    <radialGradient id="bg" cx="82%" cy="-8%" r="95%">
+      <stop offset="0%" stop-color="#2a1c3a"/>
+      <stop offset="55%" stop-color="#17111f"/>
+      <stop offset="100%" stop-color="#17111f"/>
+    </radialGradient>
+    <linearGradient id="mark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f5b942"/>
+      <stop offset="100%" stop-color="#ff6b8a"/>
+    </linearGradient>
+    <linearGradient id="ava" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#5ce0c6"/>
+      <stop offset="100%" stop-color="#f5b942"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#2f2340"/>
+      <stop offset="100%" stop-color="#271d34"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="16" stdDeviation="22" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <rect width="1000" height="560" fill="url(#bg)"/>
+
+  <!-- Header -->
+  <g transform="translate(60,44)">
+    <rect width="52" height="52" rx="14" fill="url(#mark)"/>
+    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"
+      fill="none" stroke="#2a1730" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
+      transform="translate(12,12) scale(1.15)"/>
+    <text x="66" y="24" font-size="27" font-weight="800" fill="#f4eff5" letter-spacing="-0.6">Comment Deck</text>
+    <text x="67" y="45" font-size="12" letter-spacing="3.2" fill="#6f6280" font-family="'Consolas',monospace">TOP 10 · BY LIKES</text>
+  </g>
+
+  <!-- Input row -->
+  <g transform="translate(60,120)">
+    <rect width="740" height="48" rx="12" fill="#1f1729" stroke="#ffffff" stroke-opacity="0.10"/>
+    <text x="18" y="30" font-size="15.5" fill="#6f6280">Paste a YouTube video URL or ID…</text>
+    <rect x="760" y="0" width="120" height="48" rx="12" fill="#f5b942"/>
+    <text x="820" y="30" font-size="15" font-weight="700" fill="#2a1730" text-anchor="middle">Pull top 10</text>
+  </g>
+
+  <!-- Nav arrows -->
+  <g fill="#271d34" stroke="#ffffff" stroke-opacity="0.14">
+    <circle cx="88" cy="352" r="22"/>
+    <circle cx="912" cy="352" r="22" stroke="#f5b942" stroke-opacity="0.9"/>
+  </g>
+  <path d="M15 18l-6-6 6-6" transform="translate(76,340)" fill="none" stroke="#a99bb5" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M9 18l6-6-6-6" transform="translate(900,340)" fill="none" stroke="#f5b942" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Deck stack -->
+  <rect x="176" y="232" width="648" height="205" rx="20" fill="#271d34" stroke="#ffffff" stroke-opacity="0.07"/>
+  <rect x="163" y="243" width="674" height="205" rx="20" fill="#271d34" stroke="#ffffff" stroke-opacity="0.09"/>
+  <rect x="150" y="255" width="700" height="205" rx="20" fill="url(#card)" stroke="#ffffff" stroke-opacity="0.14" filter="url(#shadow)"/>
+
+  <!-- Rank pill (overhangs top-left) -->
+  <rect x="185" y="243" width="80" height="24" rx="12" fill="#f5b942"/>
+  <text x="225" y="259" font-size="11" font-weight="700" letter-spacing="1" fill="#2a1730" text-anchor="middle" font-family="'Consolas',monospace">#1 of 10</text>
+
+  <!-- Card content -->
+  <circle cx="210" cy="312" r="24" fill="url(#ava)"/>
+  <text x="210" y="320" font-size="21" font-weight="800" fill="#2a1730" text-anchor="middle">A</text>
+  <text x="252" y="307" font-size="21" font-weight="800" fill="#f4eff5" letter-spacing="-0.3">Ada Lovelace</text>
+  <text x="252" y="330" font-size="11" letter-spacing="1.4" fill="#6f6280" font-family="'Consolas',monospace">2 MONTHS AGO</text>
+
+  <!-- Likes -->
+  <path d="M12 21s-8-4.5-8-10a4.5 4.5 0 0 1 8-2.9A4.5 4.5 0 0 1 20 11c0 5.5-8 10-8 10z" fill="#ff6b8a" transform="translate(724,299) scale(0.82)"/>
+  <text x="820" y="316" font-size="15" font-weight="700" fill="#ff6b8a" text-anchor="end" font-family="'Consolas',monospace">15,234</text>
+
+  <!-- Comment -->
+  <text x="182" y="378" font-size="18.5" fill="#f4eff5">First! Loved this one — the bit at 4:32 had me</text>
+  <text x="182" y="406" font-size="18.5" fill="#f4eff5">laughing. Instant subscribe. 🔥</text>
+
+  <!-- Footer: dots + counter + copy -->
+  <g>
+    <circle cx="154" cy="500" r="5" fill="#f5b942"/>
+    <circle cx="172" cy="500" r="4" fill="#6f6280" fill-opacity="0.5"/>
+    <circle cx="187" cy="500" r="4" fill="#6f6280" fill-opacity="0.5"/>
+    <circle cx="202" cy="500" r="4" fill="#6f6280" fill-opacity="0.5"/>
+    <circle cx="217" cy="500" r="4" fill="#6f6280" fill-opacity="0.5"/>
+    <circle cx="232" cy="500" r="4" fill="#6f6280" fill-opacity="0.5"/>
+    <circle cx="247" cy="500" r="4" fill="#6f6280" fill-opacity="0.5"/>
+    <circle cx="262" cy="500" r="4" fill="#6f6280" fill-opacity="0.5"/>
+    <circle cx="277" cy="500" r="4" fill="#6f6280" fill-opacity="0.5"/>
+    <circle cx="292" cy="500" r="4" fill="#6f6280" fill-opacity="0.5"/>
+    <text x="320" y="505" font-size="14" fill="#a99bb5" letter-spacing="1" font-family="'Consolas',monospace">01 / 10</text>
+    <rect x="726" y="485" width="124" height="31" rx="11" fill="none" stroke="#5ce0c6" stroke-opacity="0.7"/>
+    <text x="788" y="505" font-size="13" font-weight="600" fill="#5ce0c6" text-anchor="middle">Copy all 10</text>
+  </g>
+</svg>
