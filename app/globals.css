@@ -707,7 +707,7 @@ select:focus-visible {
 }
 .focus-stage {
   width: 100%;
-  max-width: 1000px;
+  max-width: 1200px;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -717,15 +717,18 @@ select:focus-visible {
   min-width: 0;
 }
 .focus-overlay .card {
-  padding: 34px 40px;
+  padding: 40px 48px;
 }
+/* Big & bold for on-camera / OBS reading. Base is already large; zoom (+/−,
+   up to 350%) takes it bigger still. */
 .focus-overlay .comment {
-  font-size: calc(1.7rem * var(--zoom, 1));
-  line-height: 1.5;
-  max-height: 62vh;
+  font-size: calc(2.1rem * var(--zoom, 1));
+  font-weight: 700;
+  line-height: 1.35;
+  max-height: 70vh;
 }
 .focus-overlay .name {
-  font-size: 1.4rem;
+  font-size: 1.7rem;
 }
 .focus-counter {
   font-family: "Space Mono", monospace;
@@ -736,9 +739,9 @@ select:focus-visible {
 
 @media (max-width: 640px) {
   .focus-overlay .card {
-    padding: 22px;
+    padding: 24px;
   }
   .focus-overlay .comment {
-    font-size: calc(1.3rem * var(--zoom, 1));
+    font-size: calc(1.5rem * var(--zoom, 1));
   }
 }

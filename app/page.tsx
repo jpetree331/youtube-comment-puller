@@ -28,8 +28,8 @@ const COUNTS = [10, 25, 50, 100];
 const DOTS_MAX = 16; // above this, dots become unreadable — use a jump box instead
 
 const ZOOM_MIN = 0.8;
-const ZOOM_MAX = 2.4;
-const ZOOM_STEP = 0.15;
+const ZOOM_MAX = 3.5;
+const ZOOM_STEP = 0.2;
 const clampZoom = (z: number) => Math.round(Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, z)) * 100) / 100;
 
 /** Recent-dropdown option label: truncated title + card count (when known). */
@@ -364,9 +364,9 @@ export default function Page() {
           </div>
           <div className="tools">
             {zoomControls()}
-            <button className="toolbtn" onClick={() => setFocus(true)} aria-label="Focus mode (big read)">
+            <button className="toolbtn" onClick={() => setFocus(true)} aria-label="Big read — fill the window for filming">
               <ExpandIcon />
-              <span>Focus</span>
+              <span>Big read</span>
             </button>
           </div>
         </div>
