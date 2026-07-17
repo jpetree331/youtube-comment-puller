@@ -26,7 +26,7 @@ Your YouTube API key lives on the server and **never reaches the browser**.
 - **Three ways to pull** — **Most liked** (re-ranked by like count), **YouTube top** (the site's own relevance order), or **Random** (a shuffled sample).
 - **Choose how many** — 10, 25, 50, or 100 comments per pull, plus the video's total comment count.
 - **Card-deck reader** — one comment per card with a `#N of M` badge, avatar, like count, and timestamp. Big, on-camera-friendly type.
-- **Zoom & Big read** — scale the comment text with `+` / `−` (up to 350%), or hit **Big read** for a full-window, big-and-**bold** view built for filming on camera (OBS-friendly — fills the window, not the whole monitor).
+- **Zoom & Big read** — scale the comment text with `+` / `−` (up to 350%), or hit **Big read** for a full-window, big-and-**bold** view built for filming on camera. Inside Big read, **Full screen** hides the browser's own UI entirely (true fullscreen) when you want nothing but the comment on screen.
 - **Flip fast** — on-screen arrows, **← / → keyboard paging**, clickable dots (or a jump box for large pulls).
 - **Copy all** — dumps a clean numbered, plain-text list for a teleprompter or show notes.
 - **Recent** — every pull is cached in your browser and **grouped by mode**, so past videos reopen instantly (even offline) — and the same video pulled two different ways stays as two distinct, labelled entries.
@@ -105,6 +105,7 @@ comment call is `POST /api/comments`.)
 | Jump to a comment   | Click a dot, or type a number in the jump box            |
 | Bigger / smaller    | **+ / −** buttons or keys (zoom the comment text)        |
 | Big read (for OBS)  | **Big read** button — fills the window, big & bold; **Esc** to exit |
+| Hide browser UI     | **Full screen** button inside Big read — true fullscreen (whole monitor, no Chrome UI); **Esc** returns to windowed |
 | Copy all as text    | **Copy all** button (numbered plain-text)                |
 | Reopen a past pull  | **Recent** dropdown                                      |
 | Settings / passcode | Gear icon (top-right)                                    |

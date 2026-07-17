@@ -1,9 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CommentItem, DeckResponse, PullMode } from "@/lib/types";
 import { DeckStage } from "./components/DeckStage";
-import { LogoIcon, GearIcon, ExpandIcon, CloseIcon } from "./components/icons";
+import { LogoIcon, GearIcon, ExpandIcon, CompressIcon, CloseIcon } from "./components/icons";
 import {
   loadIndex,
   saveDeck,
@@ -38,6 +38,26 @@ function recentLabel(x: DeckIndexEntry): string {
   return x.count ? `${t} · ${x.count}` : t;
 }
 
+// --- Native Fullscreen API helpers (with a light webkit fallback for Safari) ---
+type FsDoc = Document & { webkitFullscreenElement?: Element | null; webkitExitFullscreen?: () => void };
+type FsEl = HTMLElement & { webkitRequestFullscreen?: () => void };
+
+function fsElement(): Element | null {
+  const d = document as FsDoc;
+  return document.fullscreenElement ?? d.webkitFullscreenElement ?? null;
+}
+function requestFs(el: HTMLElement): void {
+  const fn = el.requestFullscreen ?? (el as FsEl).webkitRequestFullscreen;
+  const p = fn?.call(el);
+  if (p && typeof (p as Promise<void>).then === "function") (p as Promise<void>).catch(() => {});
+}
+function exitFs(): void {
+  const d = document as FsDoc;
+  const fn = document.exitFullscreen ?? d.webkitExitFullscreen;
+  const p = fn?.call(document);
+  if (p && typeof (p as Promise<void>).then === "function") (p as Promise<void>).catch(() => {});
+}
+
 export default function Page() {
   const [videoInput, setVideoInput] = useState("");
   const [deck, setDeck] = useState<CommentItem[]>([]);
@@ -57,6 +77,8 @@ export default function Page() {
   // Reading aids
   const [zoom, setZoom] = useState(1);
   const [focus, setFocus] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const overlayRef = useRef<HTMLDivElement>(null);
 
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [passcodeRequired, setPasscodeRequired] = useState(false);
@@ -93,10 +115,36 @@ export default function Page() {
     persistZoom(zoom);
   }, [zoom]);
 
+  // Keep isFullscreen in sync with the browser (covers Esc/F11 exits too).
+  useEffect(() => {
+    const onFsChange = () => setIsFullscreen(Boolean(fsElement()));
+    document.addEventListener("fullscreenchange", onFsChange);
+    document.addEventListener("webkitfullscreenchange", onFsChange as EventListener);
+    return () => {
+      document.removeEventListener("fullscreenchange", onFsChange);
+      document.removeEventListener("webkitfullscreenchange", onFsChange as EventListener);
+    };
+  }, []);
+
+  // Leaving Big read also leaves native fullscreen.
+  useEffect(() => {
+    if (!focus && fsElement()) exitFs();
+  }, [focus]);
+
+  const toggleFullscreen = () => {
+    if (fsElement()) exitFs();
+    else if (overlayRef.current) requestFs(overlayRef.current);
+  };
+
   // --- keyboard: paging, zoom (+/-), and Escape to leave focus mode ---
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") setFocus(false);
+      // In native fullscreen, let the browser handle Esc (exit fullscreen) and
+      // keep Big read open; a second Esc then closes Big read.
+      if (e.key === "Escape") {
+        if (!fsElement()) setFocus(false);
+        return;
+      }
       const tag = (e.target as HTMLElement | null)?.tagName;
       if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
       if (e.key === "ArrowLeft") setIdx((i) => Math.max(0, i - 1));
@@ -420,10 +468,31 @@ export default function Page() {
       <div className={`status${status.cls ? " " + status.cls : ""}`}>{status.msg}</div>
 
       {focus && hasDeck && (
-        <div className="focus-overlay" role="dialog" aria-modal="true" aria-label="Focus reader">
+        <div
+          className="focus-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Big read reader"
+          ref={overlayRef}
+        >
           <div className="focus-bar">
             {zoomControls()}
-            <button className="toolbtn" onClick={() => setFocus(false)} aria-label="Exit focus mode">
+            <button
+              className="toolbtn"
+              onClick={toggleFullscreen}
+              aria-label={isFullscreen ? "Exit full screen" : "Full screen — hide the browser UI"}
+            >
+              {isFullscreen ? <CompressIcon /> : <ExpandIcon />}
+              <span>{isFullscreen ? "Windowed" : "Full screen"}</span>
+            </button>
+            <button
+              className="toolbtn"
+              onClick={() => {
+                if (fsElement()) exitFs();
+                setFocus(false);
+              }}
+              aria-label="Exit Big read"
+            >
               <CloseIcon />
               <span>Exit</span>
             </button>

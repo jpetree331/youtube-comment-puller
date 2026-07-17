@@ -737,6 +737,15 @@ select:focus-visible {
   letter-spacing: 0.08em;
 }
 
+/* When the overlay itself is the native-fullscreen element (browser UI hidden,
+   fills the whole monitor), give the card more room to breathe. */
+.focus-overlay:fullscreen {
+  padding: 28px;
+}
+.focus-overlay:fullscreen .focus-stage {
+  max-width: min(1600px, 92vw);
+}
+
 @media (max-width: 640px) {
   .focus-overlay .card {
     padding: 24px;
